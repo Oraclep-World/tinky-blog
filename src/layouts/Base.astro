@@ -48,6 +48,8 @@ const buildVersion =
 
     <style is:global>
       :root {
+        /* บอก browser ว่าหน้านี้โทนมืด → scrollbar/form controls เป็นสีมืดตาม ไม่ใช่แถบขาวตัดพื้น */
+        color-scheme: dark;
         --bg: #0b1020;
         --bg-soft: #131a30;
         --ink: #e7ecfb;
@@ -59,6 +61,26 @@ const buildVersion =
       }
       * {
         box-sizing: border-box;
+      }
+      html {
+        /* Firefox + Chromium 121+ */
+        scrollbar-color: var(--line) var(--bg);
+      }
+      /* Safari + Chromium เก่า */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--line);
+        border-radius: 999px;
+        border: 2px solid var(--bg);
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #3b4a73;
       }
       html,
       body {
@@ -133,7 +155,10 @@ const buildVersion =
         border: 1px solid var(--line);
         border-radius: 8px;
         padding: 1rem;
-        overflow-x: auto;
+        /* ตัดบรรทัดยาวแทน scroll แนวนอน — กัน scrollbar ซ้อนหลายอันต่อหน้า
+           (Shiki ใส่ overflow-x:auto inline มา แต่พอ wrap แล้วไม่มีอะไรล้นให้ scroll) */
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
       }
       pre code {
         background: none;
