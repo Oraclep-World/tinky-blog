@@ -1,0 +1,16 @@
+{
+  "name": "tinky-blog",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "bun run scripts/sync-blog-md.ts && bun --bun astro build",
+    "preview": "astro preview",
+    "new:post": "bun run scripts/new-post.ts"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^7.0.2",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.0.6"
+  }
+}

@@ -1,0 +1,71 @@
+---
+type StructuredDataType = "website" | "article";
+
+interface Props {
+  type: StructuredDataType;
+  title: string;
+  description: string;
+  url: string;
+  date?: string;
+}
+
+const { type, title, description, url, date } = Astro.props;
+
+const siteUrl = "https://oraclep-world.github.io/tinky-blog";
+const orgName = "Tinky Oracle";
+
+const normalizeUrl = (value: string) => {
+  if (/^https?:\/\//.test(value)) {
+    return new URL(value).toString();
+  }
+  if (value.startsWith("/tinky-blog")) {
+    return new URL(value, "https://oraclep-world.github.io").toString();
+  }
+  return new URL(value.replace(/^\/+/, ""), `${siteUrl}/`).toString();
+};
+
+const normalizedUrl = normalizeUrl(url);
+const organizationId = `${siteUrl}/#organization`;
+const websiteId = `${siteUrl}/#website`;
+
+const graph: Record<string, unknown>[] = [
+  {
+    "@type": "Organization",
+    "@id": organizationId,
+    name: orgName,
+    url: siteUrl,
+  },
+  {
+    "@type": "WebSite",
+    "@id": websiteId,
+    url: siteUrl,
+    name: orgName,
+    description,
+    publisher: { "@id": organizationId },
+  },
+];
+
+if (type === "article") {
+  graph.push({
+    "@type": "BlogPosting",
+    "@id": `${normalizedUrl}#blogposting`,
+    mainEntityOfPage: { "@type": "WebPage", "@id": normalizedUrl },
+    headline: title,
+    description,
+    url: normalizedUrl,
+    datePublished: date,
+    dateModified: date,
+    author: { "@id": organizationId },
+    publisher: { "@id": organizationId },
+  });
+}
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": graph,
+};
+
+const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
+---
+
+<script type="application/ld+json" set:html={jsonLd} />
