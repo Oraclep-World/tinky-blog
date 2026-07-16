@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "bun run scripts/sync-blog-md.ts && bun --bun astro build",
+    "build": "bun run scripts/sync-blog-md.ts && bun --bun astro build && bun run scripts/build-fleet-index.ts",
     "preview": "astro preview",
     "new:post": "bun run scripts/new-post.ts"
   },
